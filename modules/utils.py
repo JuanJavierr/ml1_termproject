@@ -23,7 +23,7 @@ def build_dataset(path, num_samples=-1, rnd_state=42):
 def tune_logistic_regression(X_train, Y_train):
     model = LogisticRegression(multi_class='multinomial', max_iter=5000)
     param_grid = {
-        'solver': ['newton-cg', 'lbfgs', 'saga'],  # Removed 'liblinear' as it's not the best for multiclass.
+        'solver': ['newton-cg', 'lbfgs', 'saga'],  
         'penalty': ['l2'],
         'C': [0.001, 0.01, 0.1, 1, 10, 100]
     }
