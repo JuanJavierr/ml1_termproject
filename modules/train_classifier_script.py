@@ -53,7 +53,7 @@ if __name__ == "__main__":
     autoencoder_train_tensor = []
     for tensor_ in tfidf_train_dense_tensor:
         encode_output = auto.encode(torch.unsqueeze(tensor_, dim=1))
-        autoencoder_train_tensor.append(encode_output)
+        autoencoder_train_tensor.append(encode_output.detach().numpy())
 
     autoencoder_train_tensor = torch.stack(autoencoder_train_tensor, dim=1)
     shape_ = autoencoder_train_tensor.shape[1:]
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     autoencoder_test_tensor = []
     for tensor_ in tfidf_test_dense_tensor:
         encode_output = auto.encode(torch.unsqueeze(tensor_, dim=1))
-        autoencoder_test_tensor.append(encode_output)
+        autoencoder_test_tensor.append(encode_output.detach().numpy())
 
     autoencoder_test_tensor = torch.stack(autoencoder_test_tensor, dim=1)
     shape_ = autoencoder_test_tensor.shape[1:]
