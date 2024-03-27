@@ -6,7 +6,7 @@ from nltk.corpus import stopwords
 import html 
 from tqdm import tqdm
 
-nltk.download('stopwords')
+#nltk.download('stopwords')
 nlp = spacy.load("fr_core_news_sm")
 
 def expand_contractions(text):

@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from torch import nn
 import torch.optim as optim
 from modules.preprocess import *
-from modules.utils import build_dataset, text_edit, text_to_word2vec, evaluate
+from modules.utils import build_dataset, text_to_word2vec, evaluate
 from modules.rnn_model import TextRNN
 import spacy
 import nltk
@@ -26,13 +26,13 @@ args = parser.parse_args()
 if __name__ == "__main__":
     
     nltk.download('punkt')
-    nltk.download('stopwords')
+    #nltk.download('stopwords')
     nlp = spacy.load("fr_core_news_sm")
 
     dataset = build_dataset(path="ml1_termproject/lapresse_crawler", num_samples=args.num_samples, rnd_state=10)
 
     dataset = text_edit(dataset, grp_num=True, rm_newline=True, rm_punctuation=True,
-              rm_stop_words=True, lowercase=True, lemmatize=False, html_=True, convert_entities=False, expand=True)
+              rm_stop_words=False, lowercase=True, lemmatize=False, html_=True, convert_entities=False, expand=True)
     
     X = [x['text'] for x in dataset.values() if x['section_1'] in ['actualites', 'sports', 'affaires', 'arts', 'international']]
     Y = [x['section_label'] for x in dataset.values() if x['section_1'] in ['actualites', 'sports', 'affaires', 'arts', 'international']]
