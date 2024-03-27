@@ -76,10 +76,10 @@ if __name__ == "__main__":
     batch_size= args.batch_size
 
     dataset = TensorDataset(autoencoder_train_tensor, torch.tensor(Y_train,dtype=torch.long))
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=8)
 
     test_dataset = TensorDataset(autoencoder_test_tensor, torch.tensor(Y_test,dtype=torch.long))
-    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=8)
 
     best_test_loss = float('inf')
     epochs = args.epochs

@@ -48,10 +48,10 @@ if __name__ == "__main__":
 
     batch_size = args.batch_size
     dataset = TensorDataset(tfidf_train_dense_tensor)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=8)
 
     test_dataset = TensorDataset(tfidf_test_dense_tensor)
-    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=8)
 
     epochs = args.epochs  
     best_test_loss = float('inf')
