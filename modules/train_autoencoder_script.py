@@ -9,6 +9,8 @@ import torch.optim as optim
 from modules.autoencoder import AUTOENCODER
 from modules.preprocess import *
 from modules.utils import *
+import spacy
+import nltk
 
 
 parser = argparse.ArgumentParser()
@@ -22,7 +24,10 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
 
-    dataset = build_dataset(path="lapresse_crawler/output.json", num_samples=args.num_samples, rnd_state=10)
+    nltk.download('stopwords')
+    nlp = spacy.load("fr_core_news_sm")
+
+    dataset = build_dataset(path="ml1_termproject/lapresse_crawler/output.json", num_samples=args.num_samples, rnd_state=10)
 
     dataset = text_edit(dataset, grp_num=True, rm_newline=True, rm_punctuation=True,
               rm_stop_words=True, lowercase=True, lemmatize=True, html_=True, convert_entities=True, expand=True)
