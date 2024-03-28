@@ -2,7 +2,7 @@ import spacy
 import re
 import string
 import nltk
-from nltk.corpus import stopwords
+#from nltk.corpus import stopwords
 import html 
 from tqdm import tqdm
 
