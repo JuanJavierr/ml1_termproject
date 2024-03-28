@@ -26,7 +26,7 @@ def spacy_tokenizer(text):
 def text_edit(dataset, grp_num=False, rm_newline=False, rm_punctuation=False,
               rm_stop_words=False, lowercase=False, lemmatize=False, html_=False, convert_entities=False, expand=False):
 
-    stop_words = set(stopwords.words('french'))  
+    #stop_words = set(stopwords.words('french'))  
     extended_punctuation = string.punctuation + '«»…“”–—-'
     pattern = re.compile(f"[{re.escape(extended_punctuation)}]")   
 
