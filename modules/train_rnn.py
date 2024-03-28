@@ -25,7 +25,7 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
     
-    nltk.download('punkt')
+    #nltk.download('punkt')
     #nltk.download('stopwords')
     nlp = spacy.load("fr_core_news_sm")
 
