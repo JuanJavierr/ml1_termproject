@@ -55,7 +55,7 @@ def cleanup_text_fields(df):
         [df["section_2"], df["subject"], df["author"], df["title"]], sep="\n", na_rep=""
     )
 
-    return df
+    return df[~df["text"].isna()]
 
 
 def cleanup_date_field(df):

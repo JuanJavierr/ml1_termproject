@@ -1,2 +1,3 @@
 *.pyc
 data/
+lapresse_crawler/*.json

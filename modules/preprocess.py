@@ -2,12 +2,11 @@ import spacy
 import re
 import string
 import nltk
-
-# from nltk.corpus import stopwords
+from nltk.corpus import stopwords
 import html
 from tqdm import tqdm
 
-# nltk.download('stopwords')
+nltk.download("stopwords")
 nlp = spacy.load("fr_core_news_sm")
 
 
@@ -42,6 +41,7 @@ def text_edit(
     # stop_words = set(stopwords.words('french'))
     extended_punctuation = string.punctuation + "«»…“”–—-"
     pattern = re.compile(f"[{re.escape(extended_punctuation)}]")
+    stop_words = set(stopwords.words("french"))
 
     for attrs in tqdm(dataset.values()):
         text_ = attrs["text"]
@@ -64,21 +64,24 @@ def text_edit(
 
         if html_:
             text_ = html.unescape(text_)
+            text_ = re.sub("\xa0", " ", text_)
+            text_ = re.sub("\u2060", " ", text_)
 
         if rm_stop_words:
             words = text_.split()
             text_ = " ".join(word for word in words if word not in stop_words)
 
-        if grp_num:
-            text_ = re.sub(r"\d+", "num", text_)
-
         if rm_newline:
             text_ = re.sub(r"\n(\w)", r"\1", text_)
+            text_ = re.sub("\n", " ", text_)
 
         if rm_punctuation:
             text_ = pattern.sub("", text_)
             text_ = re.sub(r" +", " ", text_)
             text_ = text_.replace("\u2060num", "")
+
+        if grp_num:
+            text_ = re.sub(r"\d+", "num", text_)
 
         if lemmatize:
             text_words = text_.split()
