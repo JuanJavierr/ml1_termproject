@@ -15,6 +15,7 @@ def build_dataset(path, num_samples=-1, rnd_state=42):
     df3 = pd.read_json(path + "/mars.json")
     df4 = pd.read_json(path + "/decembre.json")
     df = pd.concat([df1, df2, df3, df4], ignore_index=True)
+    df = df.dropna(subset=['text'])
     df['section_label'], _ = pd.factorize(df['section_1'])
     if num_samples != -1:
         df = df.sample(n=min(len(df), num_samples), replace=False, random_state=rnd_state)
