@@ -6,3 +6,4 @@ matplotlib
 spacy
 nltk
 matplotlib
+gensim
