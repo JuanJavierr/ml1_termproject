@@ -18,22 +18,26 @@ def build_dataset(path, num_samples=-1, rnd_state=42):
     df4 = pd.read_json(path + "/decembre.json")
     df = pd.concat([df1, df2, df3, df4], ignore_index=True)
 
-    df = cleanup_dataset(df)
+    df = cleanup_text_fields(df)
+    df = cleanup_date_field(df)
 
     df["section_label"], _ = pd.factorize(df["section_1"])
     if num_samples != -1:
         df = df.sample(
             n=min(len(df), num_samples), replace=False, random_state=rnd_state
         )
+
     return df.T.to_dict()
 
 
-def cleanup_dataset(df):
-    df["title"] = df["title"].str.replace("\n", "").str.strip().str.replace("\xa0", " ")
-    df["subject"] = df["subject"].str.replace("\n", "").str.strip()
-    df["author"] = df["author"].str.replace("\n", "").str.strip()
+def cleanup_text_fields(df):
+    clean_string = (
+        lambda s: s.str.replace("\n", "").str.strip().str.replace("\xa0", " ")
+    )
 
-    repl = lambda m: m.group(1) + m.group(2)
+    df["title"] = df["title"].apply(clean_string)
+    df["subject"] = df["subject"].apply(clean_string)
+    df["author"] = df["author"].apply(clean_string)
 
     df["text"] = (
         df["text"]
@@ -41,12 +45,28 @@ def cleanup_dataset(df):
         .str.strip()
         .str.replace("\n\d\n", "")
         .str.replace("\n(.{,20})\n", lambda x: x.group(1), regex=True)
-    )  # .str.replace("([^\.])\n(\w)", repl, regex=True) \
+    )
 
-    # df["text"] = df["section_1"].str.cat([df["section_2"], df["subject"], df["author"],df["title"], df["text"]], sep="\n", na_rep="")
     df["abstract"] = df["section_1"].str.cat(
         [df["section_2"], df["subject"], df["author"], df["title"]], sep="\n", na_rep=""
     )
+
+    return df
+
+
+def cleanup_date_field(df):
+
+    df["url_date"] = pd.to_datetime(df["url_date"], format="%Y-%m-%d", errors="coerce")
+    df["url_date"] = df["url_date"].fillna(
+        pd.to_datetime(df["section_2"], format="%Y-%m-%d", errors="coerce")
+    )
+    df["url_date"] = df["url_date"].fillna(df["date"])
+    df["date"] = df["url_date"]
+
+    # Fix manuel deux articles weird
+    df.loc[14285, "date"] = df.loc[14285, "section_2"]
+    df = df.drop(index=21114)
+
     return df
 
 
