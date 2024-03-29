@@ -2,13 +2,21 @@ import scrapy
 import datetime
 
 
+def get_element_from_url(url, index):
+    list = url.split("/")
+    try:
+        return list[index]
+    except IndexError:
+        return None
+
+
 class ArticleSpider(scrapy.Spider):
     name = "article"
     allowed_domains = ["lapresse.ca"]
 
     def start_requests(self):
-        today = datetime.datetime.today() - datetime.timedelta(days=1)
-        last_year = datetime.datetime.today() - datetime.timedelta(days=365)
+        today = datetime.datetime.today() - datetime.timedelta(days=248)
+        last_year = datetime.datetime.today() - datetime.timedelta(days=279)
 
         delta = today - last_year
         for i in range(delta.days):
@@ -32,8 +40,10 @@ class ArticleSpider(scrapy.Spider):
             "url": response.url,
             "date": date,
             "author": response.css(".authorModule__name ::text").get(),
-            "section_1": response.url.split("/")[3],
-            "section_2": response.url.split("/")[3],
+            "section_1": get_element_from_url(response.url, 3),
+            "section_2": get_element_from_url(response.url, 4),
+            "url_date": get_element_from_url(response.url, 5),
+            "dossier": get_element_from_url(response.url, 6),
             "title": response.css(".titleModule__main ::text").get(),
             "subject": response.css(".titleModule__sup ::text").get(),
             "text": "\n".join(

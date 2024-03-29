@@ -13,8 +13,8 @@ from pathlib import Path
 class LapressePipeline:
     def open_spider(self, spider):
         self.output_folder = Path("output/")
-
-        self.output_folder.mkdir()
+        if not self.output_folder.exists():
+            self.output_folder.mkdir()
 
     def process_item(self, item, spider):
         with open(self.output_folder / f"{item['date']}.json", mode="+a") as outfile:
