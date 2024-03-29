@@ -23,6 +23,7 @@ def build_dataset(path="lapresse_crawler", num_samples=-1, rnd_state=42):
     df = cleanup_date_field(df)
 
     df["section_label"], _ = pd.factorize(df["section_1"])
+
     if num_samples != -1:
         df = df.sample(
             n=min(len(df), num_samples), replace=False, random_state=rnd_state
@@ -55,7 +56,7 @@ def cleanup_text_fields(df):
         [df["section_2"], df["subject"], df["author"], df["title"]], sep="\n", na_rep=""
     )
 
-    return df
+    return df[~df["text"].isna()]
 
 
 def cleanup_date_field(df):

@@ -3,11 +3,18 @@ import re
 import string
 import nltk
 
+from nltk.corpus import stopwords
+import html
+from tqdm import tqdm
+
+nltk.download("stopwords")
+
 # from nltk.corpus import stopwords
 import html
 from tqdm import tqdm
 
 # nltk.download('stopwords')
+
 nlp = spacy.load("fr_core_news_sm")
 
 
@@ -64,6 +71,8 @@ def text_edit(
 
         if html_:
             text_ = html.unescape(text_)
+            text_ = re.sub("\xa0", " ", text_)
+            text_ = re.sub("\u2060", " ", text_)
 
         if rm_stop_words:
             words = text_.split()
@@ -74,7 +83,7 @@ def text_edit(
 
         if rm_newline:
             text_ = re.sub(r"\n(\w)", r"\1", text_)
-
+            text_ = re.sub("\n", " ", text_)
         if rm_punctuation:
             text_ = pattern.sub("", text_)
             text_ = re.sub(r" +", " ", text_)
