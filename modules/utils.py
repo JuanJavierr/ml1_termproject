@@ -8,6 +8,7 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, recall_score, f1_score, precision_score
 from nltk.tokenize import word_tokenize
 import numpy as np
+from config import *
 
 
 def build_dataset(path, num_samples=-1, rnd_state=42):
@@ -27,17 +28,20 @@ def build_dataset(path, num_samples=-1, rnd_state=42):
             n=min(len(df), num_samples), replace=False, random_state=rnd_state
         )
 
+    df = df[df["section_1"].isin(INCLUDED_SECTIONS)]
+
     return df.T.to_dict()
 
 
 def cleanup_text_fields(df):
-    clean_string = (
-        lambda s: s.str.replace("\n", "").str.strip().str.replace("\xa0", " ")
+    clean_string = lambda s: (
+        s.replace("\n", "").strip().replace("\xa0", " ") if s is not None else None
     )
 
     df["title"] = df["title"].apply(clean_string)
     df["subject"] = df["subject"].apply(clean_string)
     df["author"] = df["author"].apply(clean_string)
+    df["subject"] = df["subject"].apply(clean_string)
 
     df["text"] = (
         df["text"]
@@ -64,8 +68,8 @@ def cleanup_date_field(df):
     df["date"] = df["url_date"]
 
     # Fix manuel deux articles weird
-    df.loc[14285, "date"] = df.loc[14285, "section_2"]
-    df = df.drop(index=21114)
+    # df.loc[14285, "date"] = df.loc[14285, "section_2"]
+    # df = df.drop(index=21114)
 
     return df
 
