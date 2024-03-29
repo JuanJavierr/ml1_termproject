@@ -11,7 +11,7 @@ import numpy as np
 from config import *
 
 
-def build_dataset(path, num_samples=-1, rnd_state=42):
+def build_dataset(path="lapresse_crawler", num_samples=-1, rnd_state=42):
 
     df1 = pd.read_json(path + "/fevrier.json")
     df2 = pd.read_json(path + "/janvier.json")
