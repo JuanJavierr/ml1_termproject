@@ -25,6 +25,28 @@ def build_dataset(path, num_samples=-1, rnd_state=42):
     return df.T.to_dict()
 
 
+def cleanup_dataset(df):
+    df["title"] = df["title"].str.replace("\n", "").str.strip().str.replace("\xa0", " ")
+    df["subject"] = df["subject"].str.replace("\n", "").str.strip()
+    df["author"] = df["author"].str.replace("\n", "").str.strip()
+
+    repl = lambda m: m.group(1) + m.group(2)
+
+    df["text"] = (
+        df["text"]
+        .str.replace("\xa0", " ")
+        .str.strip()
+        .str.replace("\n\d\n", "")
+        .str.replace("\n(.{,20})\n", lambda x: x.group(1), regex=True)
+    )  # .str.replace("([^\.])\n(\w)", repl, regex=True) \
+
+    # df["text"] = df["section_1"].str.cat([df["section_2"], df["subject"], df["author"],df["title"], df["text"]], sep="\n", na_rep="")
+    df["abstract"] = df["section_1"].str.cat(
+        [df["section_2"], df["subject"], df["author"], df["title"]], sep="\n", na_rep=""
+    )
+    return df
+
+
 def tune_logistic_regression(X_train, Y_train):
     model = LogisticRegression(multi_class="multinomial", max_iter=5000)
     param_grid = {
