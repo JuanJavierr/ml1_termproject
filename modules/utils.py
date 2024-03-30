@@ -31,7 +31,7 @@ def build_dataset(path="lapresse_crawler", num_samples=-1, rnd_state=42):
 
     df = df[df["section_1"].isin(INCLUDED_SECTIONS)]
     
-    df = df[df['text'].apply(lambda x: 50 <= len(x) <= 10000)]
+    df = df.head(MAX_SAMPLES)
 
     return df.T.to_dict()
 
@@ -171,7 +171,7 @@ def evaluate(Y_test, y_pred):
 
 
 def preprocess_text(text, language="french"):
-    return word_tokenize(text.lower(), language=language)
+    return word_tokenize(text.lower(), language=language)[:MAX_SAMPLE_LENGTH]
 
 
 def text_to_word2vec(text, model):
@@ -179,12 +179,12 @@ def text_to_word2vec(text, model):
     vectors = [model[word] for word in words if word in model]
    
     if len(vectors) == 0:
-        padded_array = np.zeros((model.vector_size, 10000))
+        padded_array = np.zeros((model.vector_size, MAX_SAMPLE_LENGTH))
     else:
         stacked_vectors = np.stack(vectors).T
-        total_padding = max(0, 10000 - stacked_vectors.shape[1])
+        total_padding = max(0, MAX_SAMPLE_LENGTH - stacked_vectors.shape[1])
         padding_before = total_padding // 2
         padding_after = total_padding - padding_before
         padded_array = np.pad(stacked_vectors, ((0, 0), (padding_before, padding_after)), 'constant')
    
-    return padded_array[:, :10000]
+    return padded_array[:, :MAX_SAMPLE_LENGTH]
