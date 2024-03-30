@@ -17,7 +17,8 @@ def build_dataset(path="lapresse_crawler", num_samples=-1, rnd_state=42):
     for f in os.listdir(path):
         if f.endswith(".json"):
             df = pd.concat([df, pd.read_json(path+"/"+f)])
-    
+
+    df = df.reset_index(drop=True)
     df = cleanup_text_fields(df)
     df = cleanup_date_field(df)
 
@@ -29,6 +30,8 @@ def build_dataset(path="lapresse_crawler", num_samples=-1, rnd_state=42):
         )
 
     df = df[df["section_1"].isin(INCLUDED_SECTIONS)]
+    
+    df = df[df['text'].apply(lambda x: 50 <= len(x) <= 10000)]
 
     return df.T.to_dict()
 
@@ -174,6 +177,14 @@ def preprocess_text(text, language="french"):
 def text_to_word2vec(text, model):
     words = preprocess_text(text)
     vectors = [model[word] for word in words if word in model]
+   
     if len(vectors) == 0:
-        return np.zeros(model.vector_size)
-    return np.mean(vectors, axis=0)
+        padded_array = np.zeros((model.vector_size, 10000))
+    else:
+        stacked_vectors = np.stack(vectors).T
+        total_padding = max(0, 10000 - stacked_vectors.shape[1])
+        padding_before = total_padding // 2
+        padding_after = total_padding - padding_before
+        padded_array = np.pad(stacked_vectors, ((0, 0), (padding_before, padding_after)), 'constant')
+   
+    return padded_array[:, :10000]
