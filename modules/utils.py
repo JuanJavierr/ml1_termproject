@@ -9,16 +9,15 @@ from sklearn.metrics import accuracy_score, recall_score, f1_score, precision_sc
 from nltk.tokenize import word_tokenize
 import numpy as np
 from config import *
-
+import os
 
 def build_dataset(path="lapresse_crawler", num_samples=-1, rnd_state=42):
 
-    df1 = pd.read_json(path + "/fevrier.json")
-    df2 = pd.read_json(path + "/janvier.json")
-    df3 = pd.read_json(path + "/mars.json")
-    df4 = pd.read_json(path + "/decembre.json")
-    df = pd.concat([df1, df2, df3, df4], ignore_index=True)
-
+    df = pd.DataFrame()
+    for f in os.listdir(path):
+        if f.endswith(".json"):
+            df = pd.concat([df, pd.read_json(path+"/"+f)])
+    
     df = cleanup_text_fields(df)
     df = cleanup_date_field(df)
 
